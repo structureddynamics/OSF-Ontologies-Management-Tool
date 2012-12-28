@@ -1,6 +1,6 @@
 structWSF-Ontologies-Synchronization-Framework
 ==============================================
-
+```
 Usage: php sync.php [OPTIONS]
 
 
@@ -31,3 +31,4 @@ Load All Options:
                                                    Example: 'http://localhost/ws/'
 --load-force-reload="[BOOL]"            (optional) Default is false. If true, it means all the ontologies
                                                    will be deleted and reloaded/re-indexed in structWSF
+```
