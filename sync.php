@@ -117,7 +117,7 @@
         }
         else
         {
-          if(strpos($ontologyCreate->getStatusMessageDescription(), 'WS-ONTOLOGY-DELETE-300') !== FALSE)
+          if(strpos($ontologyDelete->getStatusMessageDescription(), 'WS-ONTOLOGY-DELETE-300') !== FALSE)
           {        
             cecho("$url not currently loaded; skip deletation\n", 'BLUE');        
           }          
