@@ -12,7 +12,7 @@
   /*
     
     The sync.php script does manage the management of ontologies in a structWSF instance.  
-	
+  
   */
 
   if(PHP_SAPI != 'cli')
@@ -24,26 +24,28 @@
   $arguments = getopt('h::l::', array('help::',
                                       'load::',
                                       'list::',
+                                      'structwsf::',
                                       'load-all::',
                                       'load-list::',
                                       'load-advanced-index::',
-                                      'load-structwsf::',
-                                      'load-force-reload::',
-                                      'list-structwsf::'));  
+                                      'load-force-reload::'));  
   
   // Displaying DSF's help screen if required
   if(isset($arguments['h']) || isset($arguments['help']))
   {
     cecho("Usage: php sync.php [OPTIONS]\n\n\n", 'WHITE');
     cecho("Usage examples: \n", 'WHITE');
-    cecho("    Load all ontologies: php sync.php --load-all --load-list=\"/data/ontologies/sync/ontologies.lst\" --load-structwsf=\"http://localhost/ws/\"\n", 'WHITE');
-    cecho("    Load one ontology: php sync.php --load=\"http://purl.org/ontology/bibo/\" --load-structwsf=\"http://localhost/ws/\"\n", 'WHITE');
-    cecho("    List loaded ontologies: php sync.php --list --list-structwsf=http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Load all ontologies: php sync.php --load-all --load-list=\"/data/ontologies/sync/ontologies.lst\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Load one ontology: php sync.php --load=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    List loaded ontologies: php sync.php --list --structwsf=http://localhost/ws/\"\n", 'WHITE');
     cecho("\n\n\nOptions:\n", 'WHITE');
     cecho("-l, --load-all                          Load all the ontologies from a list of URLs\n\n", 'WHITE');
     cecho("--load=\"[URL]\"                          Load a single ontology\n\n", 'WHITE');
     cecho("--list                                  List all loaded ontologies\n\n", 'WHITE');
     cecho("-h, --help                              Show this help section\n\n", 'WHITE');
+    cecho("General Options:\n", 'WHITE');
+    cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
+    cecho("                                                   Example: 'http://localhost/ws/'\n", 'WHITE');
     cecho("Load Options:\n", 'WHITE');
     cecho("--load-list=\"[FILE]\"                    (required) File path where the list can be read.\n", 'WHITE');
     cecho("                                                   The list is a series of space-seperated\n", 'WHITE');
@@ -57,13 +59,8 @@
     cecho("                                                   such as the Search and the SPARQL web service endpoints. \n", 'WHITE');
     cecho("                                                   Enabling this option may render the creation process \n", 'WHITE');
     cecho("                                                   slower depending on the size of the created ontology.\n", 'WHITE');
-    cecho("--load-structwsf=\"[URL]\"                (required) Target structWSF network endpoints URL.\n", 'WHITE');
-    cecho("                                                   Example: 'http://localhost/ws/'\n", 'WHITE');
     cecho("--load-force-reload=\"[BOOL]\"            (optional) Default is false. If true, it means all the ontologies\n", 'WHITE');
     cecho("                                                   will be deleted and reloaded/re-indexed in structWSF\n", 'WHITE');
-    cecho("List Options:\n", 'WHITE');
-    cecho("--list-structwsf=\"[URL]\"                (required) Target structWSF network endpoints URL.\n", 'WHITE');
-    cecho("                                                   Example: 'http://localhost/ws/'\n", 'WHITE');
     
     exit;
   }
@@ -80,16 +77,16 @@
   if(isset($arguments['list']))
   {
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['list-structwsf']))
+    if(empty($arguments['structwsf']))
     {
-      cecho("Missing the --list-structwsf parameter for listing ontologies.\n", 'RED');  
+      cecho("Missing the --structwsf parameter for listing ontologies.\n", 'RED');  
       
       exit;
     }    
     
     include_once('inc/getLoadedOntologies.php');
     
-    $ontologies = getLoadedOntologies($arguments['list-structwsf']);
+    $ontologies = getLoadedOntologies($arguments['structwsf']);
     
     $nb = 0;
     
@@ -99,7 +96,7 @@
     {
       $nb++;
       
-      cecho("  ($nb) ".$ontology['label'].($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
     }
     
     cecho("\nReference Ontologies: \n", 'WHITE');
@@ -108,7 +105,7 @@
     {
       $nb++;
       
-      cecho("  ($nb) ".$ontology['label'].($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
     }
     
     cecho("\nAdministrative Ontologies: \n", 'WHITE');
@@ -117,14 +114,13 @@
     {
       $nb++;
       
-      cecho("  ($nb) ".$ontology['label'].($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
     }
   }
   
   // Reload all ontologies
   if(isset($arguments['l']) || isset($arguments['load-all']) || isset($arguments['load']))
   {
-    DebugBreak();
     // Make sure the required arguments are defined in the arguments
     if(empty($arguments['load-list']) && !isset($arguments['load']))
     {
@@ -134,9 +130,9 @@
     }
     
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['load-structwsf']))
+    if(empty($arguments['structwsf']))
     {
-      cecho("Missing the --load-structwsf parameter for loading all the ontologies.\n", 'RED');  
+      cecho("Missing the --structwsf parameter for loading all the ontologies.\n", 'RED');  
       
       exit;
     }
@@ -171,7 +167,7 @@
       {
         cecho("Deleting ontology (reload foced): $url\n", 'CYAN');
         
-        $ontologyDelete = new OntologyDeleteQuery($arguments['load-structwsf']);
+        $ontologyDelete = new OntologyDeleteQuery($arguments['structwsf']);
         
         $ontologyDelete->ontology($url)
                        ->deleteOntology()
@@ -200,7 +196,7 @@
         }
       }
       
-      $ontologyCreate = new OntologyCreateQuery($arguments['load-structwsf']);
+      $ontologyCreate = new OntologyCreateQuery($arguments['structwsf']);
       
       $ontologyCreate->uri($url)
                      ->enableReasoner();
