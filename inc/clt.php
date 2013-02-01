@@ -40,7 +40,7 @@
   
   function getInput($msg)
   {
-    fwrite(STDOUT, cecho("$msg: ", 'WHITE', TRUE));
+    fwrite(STDOUT, cecho("$msg: ", 'LIGHT_GREEN', TRUE));
     $varin = trim(fgets(STDIN));
     return $varin;
   }    
