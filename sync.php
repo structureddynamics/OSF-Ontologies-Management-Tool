@@ -8,6 +8,8 @@
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\create\OntologyCreateQuery;
   
+  include_once('inc/cecho.php');
+  
   /*
     
     The sync.php script does manage the management of ontologies in a structWSF instance.  
@@ -195,35 +197,6 @@
         {
           continue;
         }
-        
-        /*
-        $ontologyDelete = new OntologyDeleteQuery($arguments['structwsf']);
-        
-        $ontologyDelete->ontology($url)
-                       ->deleteOntology()
-                       ->send();
-                       
-        if($ontologyDelete->isSuccessful())
-        {
-          cecho("Ontology successfully deleted: $url\n", 'CYAN');
-        }
-        else
-        {
-          if(strpos($ontologyDelete->getStatusMessageDescription(), 'WS-ONTOLOGY-DELETE-300') !== FALSE)
-          {        
-            cecho("$url not currently loaded; skip deletation\n", 'BLUE');        
-          }          
-          else
-          {
-            $debugFile = md5(microtime()).'.error';
-            file_put_contents('/tmp/'.$debugFile, var_export($ontologyDelete, TRUE));
-                 
-            @cecho('Can\'t delete ontology '.$url.'. '. $ontologyDelete->getStatusMessage() . 
-                 $ontologyDelete->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
-                 
-            continue;
-          }
-        }*/
       }
       
       $ontologyCreate = new OntologyCreateQuery($arguments['structwsf']);
@@ -263,46 +236,4 @@
       }
     }
   }
-  
-     
-  function cecho($text, $color="NORMAL", $return = FALSE)
-  {
-    $_colors = array(
-      'LIGHT_RED'    => "[1;31m",
-      'LIGHT_GREEN'  => "[1;32m",
-      'YELLOW'       => "[1;33m",
-      'LIGHT_BLUE'   => "[1;34m",
-      'MAGENTA'      => "[1;35m",
-      'LIGHT_CYAN'   => "[1;36m",
-      'WHITE'        => "[1;37m",
-      'NORMAL'       => "[0m",
-      'BLACK'        => "[0;30m",
-      'RED'          => "[0;31m",
-      'GREEN'        => "[0;32m",
-      'BROWN'        => "[0;33m",
-      'BLUE'         => "[0;34m",
-      'CYAN'         => "[0;36m",
-      'BOLD'         => "[1m",
-      'UNDERSCORE'   => "[4m",
-      'REVERSE'      => "[7m",
-    );    
-    
-    $out = $_colors["$color"];
-    
-    if($out == "")
-    { 
-      $out = "[0m"; 
-    }
-    
-    if($return)
-    {
-      return(chr(27)."$out$text".chr(27)."[0m");
-    }
-    else
-    {
-      echo chr(27)."$out$text".chr(27).chr(27)."[0m";
-    }
-  }
-
-
 ?>
