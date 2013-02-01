@@ -95,7 +95,16 @@
       exit;
     }
     
-         
+    include_once('inc/generateStructures.php');
+    
+    if(!empty($arguments['generate-structures']))
+    {
+      generateStructures($arguments['generate-structures'], $arguments['structwsf']);
+    }
+    else
+    {
+      cecho("No folder path specified for the --generate-structures option.\n", 'RED'); 
+    }
   } 
   // Save loaded ontology
   if(isset($arguments['save']))
