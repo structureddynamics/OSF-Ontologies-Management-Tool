@@ -7,7 +7,6 @@
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\create\OntologyCreateQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\delete\OntologyDeleteQuery;
   
   /*
     
@@ -24,6 +23,7 @@
   $arguments = getopt('h::l::', array('help::',
                                       'load::',
                                       'list::',
+                                      'delete::',
                                       'structwsf::',
                                       'load-all::',
                                       'load-list::',
@@ -38,10 +38,12 @@
     cecho("    Load all ontologies: php sync.php --load-all --load-list=\"/data/ontologies/sync/ontologies.lst\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("    Load one ontology: php sync.php --load=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("    List loaded ontologies: php sync.php --list --structwsf=http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Deleting an ontology: php sync.php --delete=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("\n\n\nOptions:\n", 'WHITE');
     cecho("-l, --load-all                          Load all the ontologies from a list of URLs\n\n", 'WHITE');
     cecho("--load=\"[URL]\"                          Load a single ontology\n\n", 'WHITE');
     cecho("--list                                  List all loaded ontologies\n\n", 'WHITE');
+    cecho("--delete=\"[URL]\"                        Delete an ontology from the instance\n\n", 'WHITE');
     cecho("-h, --help                              Show this help section\n\n", 'WHITE');
     cecho("General Options:\n", 'WHITE');
     cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
@@ -72,6 +74,24 @@
   $structwsfFolder = rtrim($setup["config"]["structwsfFolder"], "/");
   
   include_once($structwsfFolder."/StructuredDynamics/SplClassLoader.php");   
+ 
+  // Delete loaded ontology
+  if(isset($arguments['delete']))
+  {
+    // Make sure the required arguments are defined in the arguments
+    if(empty($arguments['structwsf']))
+    {
+      cecho("Missing the --structwsf parameter for deleting the ontology.\n", 'RED');  
+      
+      exit;
+    }    
+    
+    cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
+    
+    include_once('inc/deleteOntology.php');
+    
+    $deleted = deleteOntology($arguments['delete'], $arguments['structwsf']);  
+  }  
  
   // List loaded ontologies
   if(isset($arguments['list']))
@@ -165,8 +185,18 @@
       
       if(isset($arguments['load-force-reload']) && filter_var($arguments['load-force-reload'], FILTER_VALIDATE_BOOLEAN))
       {
-        cecho("Deleting ontology (reload foced): $url\n", 'CYAN');
+        cecho("Deleting ontology (reload forced): $url\n", 'CYAN');
         
+        include_once('inc/deleteOntology.php');
+        
+        $deleted = deleteOntology($url, $arguments['structwsf']);
+        
+        if(!$deleted)
+        {
+          continue;
+        }
+        
+        /*
         $ontologyDelete = new OntologyDeleteQuery($arguments['structwsf']);
         
         $ontologyDelete->ontology($url)
@@ -193,7 +223,7 @@
                  
             continue;
           }
-        }
+        }*/
       }
       
       $ontologyCreate = new OntologyCreateQuery($arguments['structwsf']);
