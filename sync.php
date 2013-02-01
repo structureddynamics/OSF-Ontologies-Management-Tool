@@ -26,7 +26,9 @@
                                       'load::',
                                       'list::',
                                       'delete::',
+                                      'save::',    
                                       'structwsf::',
+                                      'generate-structures::',
                                       'load-all::',
                                       'load-list::',
                                       'load-advanced-index::',
@@ -47,6 +49,10 @@
     cecho("--list                                  List all loaded ontologies\n\n", 'WHITE');
     cecho("--delete                                Show a list of loaded ontologies, select one for deletation\n\n", 'WHITE');
     cecho("--delete=\"[URL]\"                        Delete a specific ontology from the instance using its URI\n\n", 'WHITE');
+    cecho("--save                                  Show a list of loaded ontologies, select one for saving\n\n", 'WHITE');
+    cecho("--save=\"[URL]\"                          Save a specific ontology from the instance using its URI\n\n", 'WHITE');
+    cecho("--generate-structures=\"[PATH]\"          Generate all the derivate structures of the ontology.\n", 'WHITE');
+    cecho("                                        Specify where the structure files should be saved.\n\n", 'WHITE');
     cecho("-h, --help                              Show this help section\n\n", 'WHITE');
     cecho("General Options:\n", 'WHITE');
     cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
@@ -77,6 +83,107 @@
   $structwsfFolder = rtrim($setup["config"]["structwsfFolder"], "/");
   
   include_once($structwsfFolder."/StructuredDynamics/SplClassLoader.php");   
+ 
+  // Generate structures
+  if(isset($arguments['generate-structures']))
+  {
+    // Make sure the required arguments are defined in the arguments
+    if(empty($arguments['structwsf']))
+    {
+      cecho("Missing the --structwsf parameter for generating the structures.\n", 'RED');  
+      
+      exit;
+    }
+    
+         
+  } 
+  // Save loaded ontology
+  if(isset($arguments['save']))
+  {
+    // Make sure the required arguments are defined in the arguments
+    if(empty($arguments['structwsf']))
+    {
+      cecho("Missing the --structwsf parameter for saving the ontology.\n", 'RED');  
+      
+      exit;
+    } 
+
+    include_once('inc/saveOntology.php');
+    
+    if($arguments['save'] != '')
+    {   
+      cecho("Saving ontology: ".$arguments['save']."\n", 'CYAN');
+      
+      $deleted = saveOntology($arguments['save'], $arguments['structwsf']);  
+    }
+    else
+    {
+      // Show the list of loaded ontologies
+      include_once('inc/getLoadedOntologies.php');
+
+      $ontologies = getLoadedOntologies($arguments['structwsf']);
+      
+      showLoadedOntologies($ontologies);  
+      
+      $ontologyNum = getInput('Which ontology number would you like to save?');
+      
+      $nb = 0;
+      $yes = FALSE;
+      $ontology = NULL;
+      
+      foreach($ontologies['local'] as $key => $onto)
+      {
+        $nb++;
+        if($nb == $ontologyNum)
+        {
+          $yes = getInput('Are you sure you want to save the '.$ontologies['local'][$key]['label'].'?');
+          $ontology = $ontologies['local'][$key];
+          break;
+        }
+      }
+      
+      if(empty($ontology))
+      {
+        foreach($ontologies['reference'] as $key => $onto)
+        {
+          $nb++;
+          if($nb == $ontologyNum)
+          {
+            $yes = getInput('Are you sure you want to save the '.$ontologies['reference'][$key]['label'].'?');
+            $ontology = $ontologies['reference'][$key];
+            break;
+          }
+        }        
+      }
+      
+      if(empty($ontology))
+      {
+        foreach($ontologies['admin'] as $key => $onto)
+        {
+          $nb++;
+          if($nb == $ontologyNum)
+          {
+            $yes = getInput('Are you sure you want to save the '.$ontologies['reference'][$key]['label'].'?');
+            $ontology = $ontologies['administrative'][$key];
+            break;
+          }
+        }        
+      }
+      
+      $yes = filter_var($yes, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+      if($yes === NULL)
+      {
+        $yes = FALSE;
+      }      
+      
+      if($yes)
+      {
+        cecho("Saving ontology: ".$ontology['label']."\n", 'CYAN');
+        
+        $deleted = saveOntology($ontology['uri'], $arguments['structwsf']);          
+      }
+    }
+  }   
  
   // Delete loaded ontology
   if(isset($arguments['delete']))
