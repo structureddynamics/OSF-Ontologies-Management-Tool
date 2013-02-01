@@ -36,5 +36,12 @@
     {
       echo chr(27)."$out$text".chr(27).chr(27)."[0m";
     }
-  }  
+  }
+  
+  function getInput($msg)
+  {
+    fwrite(STDOUT, cecho("$msg: ", 'WHITE', TRUE));
+    $varin = trim(fgets(STDIN));
+    return $varin;
+  }    
 ?>

@@ -74,4 +74,36 @@
     }    
   }
   
+  function showLoadedOntologies($ontologies)
+  {
+    $nb = 0;
+    
+    cecho("Local Ontologies: \n", 'WHITE');
+    
+    foreach($ontologies['local'] as $ontology)
+    {
+      $nb++;
+      
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+    }
+    
+    cecho("\nReference Ontologies: \n", 'WHITE');
+    
+    foreach($ontologies['reference'] as $ontology)
+    {
+      $nb++;
+      
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+    }
+    
+    cecho("\nAdministrative Ontologies: \n", 'WHITE');
+    
+    foreach($ontologies['admin'] as $ontology)
+    {
+      $nb++;
+      
+      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
+    }    
+  }
+  
 ?>

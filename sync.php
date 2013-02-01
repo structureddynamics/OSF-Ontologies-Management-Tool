@@ -8,7 +8,7 @@
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\create\OntologyCreateQuery;
   
-  include_once('inc/cecho.php');
+  include_once('inc/clt.php');
   
   /*
     
@@ -45,7 +45,8 @@
     cecho("-l, --load-all                          Load all the ontologies from a list of URLs\n\n", 'WHITE');
     cecho("--load=\"[URL]\"                          Load a single ontology\n\n", 'WHITE');
     cecho("--list                                  List all loaded ontologies\n\n", 'WHITE');
-    cecho("--delete=\"[URL]\"                        Delete an ontology from the instance\n\n", 'WHITE');
+    cecho("--delete                                Show a list of loaded ontologies, select one for deletation\n\n", 'WHITE');
+    cecho("--delete=\"[URL]\"                        Delete a specific ontology from the instance using its URI\n\n", 'WHITE');
     cecho("-h, --help                              Show this help section\n\n", 'WHITE');
     cecho("General Options:\n", 'WHITE');
     cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
@@ -86,13 +87,83 @@
       cecho("Missing the --structwsf parameter for deleting the ontology.\n", 'RED');  
       
       exit;
-    }    
-    
-    cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
-    
+    } 
+
     include_once('inc/deleteOntology.php');
     
-    $deleted = deleteOntology($arguments['delete'], $arguments['structwsf']);  
+    if($arguments['delete'] != '')
+    {   
+      cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
+      
+      $deleted = deleteOntology($arguments['delete'], $arguments['structwsf']);  
+    }
+    else
+    {
+      // Show the list of loaded ontologies
+      include_once('inc/getLoadedOntologies.php');
+
+      $ontologies = getLoadedOntologies($arguments['structwsf']);
+      
+      showLoadedOntologies($ontologies);  
+      
+      $ontologyNum = getInput('Which ontology number would you like to delete?');
+      
+      $nb = 0;
+      $yes = FALSE;
+      $ontology = NULL;
+      
+      foreach($ontologies['local'] as $key => $onto)
+      {
+        $nb++;
+        if($nb == $ontologyNum)
+        {
+          $yes = getInput('Are you sure you want to delete the '.$ontologies['local'][$key]['label'].'?');
+          $ontology = $ontologies['local'][$key];
+          break;
+        }
+      }
+      
+      if(empty($ontology))
+      {
+        foreach($ontologies['reference'] as $key => $onto)
+        {
+          $nb++;
+          if($nb == $ontologyNum)
+          {
+            $yes = getInput('Are you sure you want to delete the '.$ontologies['reference'][$key]['label'].'?');
+            $ontology = $ontologies['reference'][$key];
+            break;
+          }
+        }        
+      }
+      
+      if(empty($ontology))
+      {
+        foreach($ontologies['admin'] as $key => $onto)
+        {
+          $nb++;
+          if($nb == $ontologyNum)
+          {
+            $yes = getInput('Are you sure you want to delete the '.$ontologies['reference'][$key]['label'].'?');
+            $ontology = $ontologies['administrative'][$key];
+            break;
+          }
+        }        
+      }
+      
+      $yes = filter_var($yes, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+      if($yes === NULL)
+      {
+        $yes = FALSE;
+      }      
+      
+      if($yes)
+      {
+        cecho("Deleting ontology: ".$ontology['label']."\n", 'CYAN');
+        
+        $deleted = deleteOntology($ontology['uri'], $arguments['structwsf']);          
+      }
+    }
   }  
  
   // List loaded ontologies
@@ -110,34 +181,7 @@
     
     $ontologies = getLoadedOntologies($arguments['structwsf']);
     
-    $nb = 0;
-    
-    cecho("Local Ontologies: \n", 'WHITE');
-    
-    foreach($ontologies['local'] as $ontology)
-    {
-      $nb++;
-      
-      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
-    }
-    
-    cecho("\nReference Ontologies: \n", 'WHITE');
-    
-    foreach($ontologies['reference'] as $ontology)
-    {
-      $nb++;
-      
-      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
-    }
-    
-    cecho("\nAdministrative Ontologies: \n", 'WHITE');
-    
-    foreach($ontologies['admin'] as $ontology)
-    {
-      $nb++;
-      
-      cecho("  ($nb) ".$ontology['label'].'  '.cecho('('.$ontology['uri'].')', 'CYAN', TRUE).'  '.($ontology['modified'] ? '  '.cecho('[modified; not saved]', 'YELLOW', TRUE) : '')."\n", 'WHITE');
-    }
+    showLoadedOntologies($ontologies);
   }
   
   // Reload all ontologies
