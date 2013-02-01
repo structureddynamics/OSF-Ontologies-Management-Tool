@@ -1,4 +1,4 @@
-structWSF-Ontologies-Synchronization-Framework
+structWSF-Ontologies-Management-Tool
 ==============================================
 ```
 Usage: php sync.php [OPTIONS]
