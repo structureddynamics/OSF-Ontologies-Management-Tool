@@ -184,7 +184,7 @@
     {  
       $resultset = $ontologyRead->getResultset()->getResultset();    
       
-      $ironXML = $resultset['unspecified'][$ontology['uri']]['http://purl.org/ontology/wsf#serializedClassHierarchy']['0']['value'];
+      $ironXML = $resultset['unspecified'][""]['http://purl.org/ontology/wsf#serializedClassHierarchy']['0']['value'];
       
       cecho("Generated...\n", 'CYAN');
       
@@ -213,7 +213,7 @@
     {  
       $resultset = $ontologyRead->getResultset()->getResultset();    
       
-      $ironXML = $resultset['unspecified'][$ontology['uri']]['http://purl.org/ontology/wsf#serializedPropertyHierarchy']['0']['value'];
+      $ironXML = $resultset['unspecified'][""]['http://purl.org/ontology/wsf#serializedPropertyHierarchy']['0']['value'];
       
       cecho("Generated...\n", 'CYAN');
       
