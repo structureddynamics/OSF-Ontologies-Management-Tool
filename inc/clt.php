@@ -44,4 +44,12 @@
     $varin = trim(fgets(STDIN));
     return $varin;
   }    
+  
+  function oecho($lines)
+  {
+    foreach($lines as $line)
+    {
+      cecho($line."\n", 'BLUE');
+    }
+  }
 ?>
