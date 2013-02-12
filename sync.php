@@ -43,6 +43,7 @@
     cecho("    Load one ontology: php sync.php --load=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("    List loaded ontologies: php sync.php --list --structwsf=http://localhost/ws/\"\n", 'WHITE');
     cecho("    Deleting an ontology: php sync.php --delete=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Generate structures: php sync.php --generate-structures=\"/data/ontologies/structure/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("\n\n\nOptions:\n", 'WHITE');
     cecho("-l, --load-all                          Load all the ontologies from a list of URLs\n\n", 'WHITE');
     cecho("--load=\"[URL]\"                          Load a single ontology\n\n", 'WHITE');
