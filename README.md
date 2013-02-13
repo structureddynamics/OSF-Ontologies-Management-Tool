@@ -5,7 +5,7 @@ Usage: php sync.php [OPTIONS]
 
 
 Usage examples:
-    Load all ontologies: php sync.php --load-all --load-list="/data/ontologies/sync/ontologies.lst --load-structwsf=http://localhost/ws/"
+    Load all ontologies: ./omt --load-all --load-list="/data/ontologies/sync/ontologies.lst --load-structwsf=http://localhost/ws/"
 
 
 
