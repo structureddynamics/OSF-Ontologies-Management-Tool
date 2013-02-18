@@ -70,7 +70,7 @@
       @cecho('Can\'t get loaded ontologies. '. $ontologyRead->getStatusMessage() . 
              $ontologyRead->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
              
-      exit;
+      exit(1);
     }    
   }
   
