@@ -63,6 +63,9 @@ Options:
 General Options:
 --structwsf="[URL]"                     (required) Target structWSF network endpoints URL.
                                                    Example: 'http://localhost/ws/'
+--structwsf-query-extension="[CLASS]"   (optional) Query Extension Class (with its full namespace) to use for querying structwsf
+                                                   Example: 'StructuredDynamics\structwsf
+ramework\MYQuerierExtension'
 Load Options:
 --load-list="[FILE]"                    (required) File path where the list can be read.
                                                    The list is a series of space-seperated
