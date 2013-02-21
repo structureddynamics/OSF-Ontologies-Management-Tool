@@ -10,13 +10,13 @@
   * 
   * @return Return FALSE if the ontology couldn't be saved. Return TRUE otherwise.
   */  
-  function saveOntology($uri, $structwsf)
+  function saveOntology($uri, $structwsf, $queryExtension = NULL)
   {
     $ontologyUpdate = new OntologyUpdateQuery($structwsf);
     
     $ontologyUpdate->ontology($uri)
                    ->saveOntology()
-                   ->send();
+                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                    
     if($ontologyUpdate->isSuccessful())
     {

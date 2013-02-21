@@ -3,7 +3,7 @@
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
 
-  function getLoadedOntologies($structwsf)
+  function getLoadedOntologies($structwsf, $queryExtension = NULL)
   {
     $ontologyRead = new OntologyReadQuery($structwsf);
     
@@ -11,7 +11,7 @@
     $getLoadedOntologiesFunction->modeDescriptions();
     
     $ontologyRead->getLoadedOntologies($getLoadedOntologiesFunction)
-                 ->send();
+                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
         
     if($ontologyRead->isSuccessful())
     {

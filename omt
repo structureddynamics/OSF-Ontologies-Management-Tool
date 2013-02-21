@@ -38,6 +38,7 @@
                                       'load-all::',
                                       'load-list::',
                                       'load-advanced-index::',
+                                      'structwsf-query-extension::',
                                       'load-force-reload::'));  
   
   // Displaying DSF's help screen if required
@@ -64,6 +65,8 @@
     cecho("General Options:\n", 'WHITE');
     cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
     cecho("                                                   Example: 'http://localhost/ws/'\n", 'WHITE');
+    cecho("--structwsf-query-extension=\"[CLASS]\"   (optional) Query Extension Class (with its full namespace) to use for querying structwsf\n", 'WHITE');
+    cecho("                                                   Example: 'StructuredDynamics\structwsf\framework\MYQuerierExtension'\n", 'WHITE');
     cecho("Load Options:\n", 'WHITE');
     cecho("--load-list=\"[FILE]\"                    (required) File path where the list can be read.\n", 'WHITE');
     cecho("                                                   The list is a series of space-seperated\n", 'WHITE');
@@ -89,7 +92,14 @@
   // Load the structWSF-PHP-API
   $structwsfFolder = rtrim($setup["config"]["structwsfFolder"], "/");
   
-  include_once($structwsfFolder."/StructuredDynamics/SplClassLoader.php");   
+  include_once($structwsfFolder."/StructuredDynamics/SplClassLoader.php"); 
+  
+  // Check if a query extension has been defined
+  $queryExtension = NULL;
+  if(isset($arguments['structwsf-query-extension']))  
+  {
+    $queryExtension = $arguments['structwsf-query-extension'];
+  }
  
   // Generate structures
   if(isset($arguments['generate-structures']))
@@ -106,7 +116,7 @@
     
     if(!empty($arguments['generate-structures']))
     {
-      generateStructures($arguments['generate-structures'], $arguments['structwsf']);
+      generateStructures($arguments['generate-structures'], $arguments['structwsf'], $queryExtension);
     }
     else
     {
@@ -130,14 +140,14 @@
     {   
       cecho("Saving ontology: ".$arguments['save']."\n", 'CYAN');
       
-      $deleted = saveOntology($arguments['save'], $arguments['structwsf']);  
+      $deleted = saveOntology($arguments['save'], $arguments['structwsf'], $queryExtension);  
     }
     else
     {
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['structwsf']);
+      $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -196,7 +206,7 @@
       {
         cecho("Saving ontology: ".$ontology['label']."\n", 'CYAN');
         
-        $deleted = saveOntology($ontology['uri'], $arguments['structwsf']);          
+        $deleted = saveOntology($ontology['uri'], $arguments['structwsf'], $queryExtension);          
       }
     }
   }   
@@ -218,14 +228,14 @@
     {   
       cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
       
-      $deleted = deleteOntology($arguments['delete'], $arguments['structwsf']);  
+      $deleted = deleteOntology($arguments['delete'], $arguments['structwsf'], $queryExtension);  
     }
     else
     {
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['structwsf']);
+      $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -284,7 +294,7 @@
       {
         cecho("Deleting ontology: ".$ontology['label']."\n", 'CYAN');
         
-        $deleted = deleteOntology($ontology['uri'], $arguments['structwsf']);          
+        $deleted = deleteOntology($ontology['uri'], $arguments['structwsf'], $queryExtension);          
       }
     }
   }  
@@ -302,7 +312,7 @@
     
     include_once('inc/getLoadedOntologies.php');
     
-    $ontologies = getLoadedOntologies($arguments['structwsf']);
+    $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
     
     showLoadedOntologies($ontologies);
   }
@@ -358,7 +368,7 @@
         
         include_once('inc/deleteOntology.php');
         
-        $deleted = deleteOntology($url, $arguments['structwsf']);
+        $deleted = deleteOntology($url, $arguments['structwsf'], $queryExtension);
         
         if(!$deleted)
         {
@@ -380,7 +390,7 @@
         $ontologyCreate->disableAdvancedIndexation();
       }
       
-      $ontologyCreate->send();
+      $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
       
       if($ontologyCreate->isSuccessful())      
       {

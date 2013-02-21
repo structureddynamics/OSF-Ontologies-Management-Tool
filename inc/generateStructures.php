@@ -2,7 +2,7 @@
 
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
 
-  function generateStructures($folder, $structwsf)
+  function generateStructures($folder, $structwsf, $queryExtension = NULL)
   {
     include_once('getLoadedOntologies.php');
 
@@ -23,7 +23,7 @@
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronXMLSchema()
-                   ->send();
+                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                    
       if($ontologyRead->isSuccessful())
       {  
@@ -61,7 +61,7 @@
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronJsonSchema()
-                   ->send();
+                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                    
       if($ontologyRead->isSuccessful())
       {  
@@ -178,7 +178,7 @@
     $ontologyRead = new OntologyReadQuery($structwsf);
     
     $ontologyRead->getSerializedClassHierarchy()
-                 ->send();
+                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                  
     if($ontologyRead->isSuccessful())
     {  
@@ -207,7 +207,7 @@
     $ontologyRead = new OntologyReadQuery($structwsf);
     
     $ontologyRead->getSerializedPropertyHierarchy()
-                 ->send();
+                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                  
     if($ontologyRead->isSuccessful())
     {  

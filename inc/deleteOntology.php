@@ -10,13 +10,13 @@
   * 
   * @return Return FALSE if the ontology couldn't be delete. Return TRUE otherwise.
   */
-  function deleteOntology($uri, $structwsf)
+  function deleteOntology($uri, $structwsf, $queryExtension = NULL)
   {
     $ontologyDelete = new OntologyDeleteQuery($structwsf);
     
     $ontologyDelete->ontology($uri)
                    ->deleteOntology()
-                   ->send();
+                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
                    
     if($ontologyDelete->isSuccessful())
     {
