@@ -278,7 +278,7 @@
           if($nb == $ontologyNum)
           {
             $yes = getInput('Are you sure you want to delete the '.$ontologies['reference'][$key]['label'].'?');
-            $ontology = $ontologies['administrative'][$key];
+            $ontology = $ontologies['admin'][$key];
             break;
           }
         }        
