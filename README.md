@@ -81,4 +81,12 @@ Load Options:
                                                    slower depending on the size of the created ontology.
 --load-force-reload="[BOOL]"            (optional) Default is false. If true, it means all the ontologies
                                                    will be deleted and reloaded/re-indexed in structWSF
+--global-perm-create="[BOOL]"           (optional) Default is false. If true, it means that the ontology
+                                                   that will be created will have global create permissions
+--global-perm-read="[BOOL]"           (optional) Default is true. If true, it means that the ontology
+                                                   that will be read will have global create permissions
+--global-perm-update="[BOOL]"           (optional) Default is false. If true, it means that the ontology
+                                                   that will be update will have global create permissions
+--global-perm-delete="[BOOL]"           (optional) Default is delete. If true, it means that the ontology
+                                                   that will be created will have global create permissions
 ```

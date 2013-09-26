@@ -9,6 +9,7 @@
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
   use \StructuredDynamics\structwsf\php\api\ws\ontology\create\OntologyCreateQuery;
+  use \StructuredDynamics\structwsf\php\api\framework\CRUDPermission;
   
   // Set the working directory of this script to its home directory. That way, if it is ran from elsewhere,
   // the relative paths will follow.
@@ -39,7 +40,11 @@
                                       'load-list::',
                                       'load-advanced-index::',
                                       'structwsf-query-extension::',
-                                      'load-force-reload::'));  
+                                      'load-force-reload::',
+                                      'global-perm-create::',
+                                      'global-perm-read::',
+                                      'global-perm-update::',
+                                      'global-perm-delete::'));  
   
   // Displaying DSF's help screen if required
   if(isset($arguments['h']) || isset($arguments['help']))
@@ -82,6 +87,14 @@
     cecho("                                                   slower depending on the size of the created ontology.\n", 'WHITE');
     cecho("--load-force-reload=\"[BOOL]\"            (optional) Default is false. If true, it means all the ontologies\n", 'WHITE');
     cecho("                                                   will be deleted and reloaded/re-indexed in structWSF\n", 'WHITE');
+    cecho("--global-perm-create=\"[BOOL]\"           (optional) Default is false. If true, it means that the ontology\n", 'WHITE');
+    cecho("                                                   that will be created will have global create permissions\n", 'WHITE');
+    cecho("--global-perm-read=\"[BOOL]\"           (optional) Default is true. If true, it means that the ontology\n", 'WHITE');
+    cecho("                                                   that will be read will have global create permissions\n", 'WHITE');
+    cecho("--global-perm-update=\"[BOOL]\"           (optional) Default is false. If true, it means that the ontology\n", 'WHITE');
+    cecho("                                                   that will be update will have global create permissions\n", 'WHITE');
+    cecho("--global-perm-delete=\"[BOOL]\"           (optional) Default is delete. If true, it means that the ontology\n", 'WHITE');
+    cecho("                                                   that will be created will have global create permissions\n", 'WHITE');
     
     exit;
   }
@@ -376,9 +389,37 @@
         }
       }
       
+      $gCreate = FALSE;
+      $gRead = TRUE;
+      $gUpdate = FALSE;
+      $gDelete = FALSE;
+      
+      if(isset($arguments['global-perm-create']) && filter_var($arguments['global-perm-create'], FILTER_VALIDATE_BOOLEAN))
+      {
+        $gCreate = TRUE;
+      }
+      
+      if(isset($arguments['global-perm-read']) && filter_var($arguments['global-perm-read'], FILTER_VALIDATE_BOOLEAN))
+      {
+        $gRead = TRUE;
+      }
+      
+      if(isset($arguments['global-perm-update']) && filter_var($arguments['global-perm-update'], FILTER_VALIDATE_BOOLEAN))
+      {
+        $gUpdate = TRUE;
+      }
+      
+      if(isset($arguments['global-perm-delete']) && filter_var($arguments['global-perm-delete'], FILTER_VALIDATE_BOOLEAN))
+      {
+        $gDelete = TRUE;
+      }
+      
+      $crudPermissions = new CRUDPermission($gCreate, $gRead, $gUpdate, $gDelete);
+      
       $ontologyCreate = new OntologyCreateQuery($arguments['structwsf']);
       
       $ontologyCreate->uri($url)
+                     ->globalPermissions($crudPermissions)
                      ->enableReasoner();
                      
       if(isset($arguments['load-advanced-index']) && filter_var($arguments['load-advanced-index'], FILTER_VALIDATE_BOOLEAN))
