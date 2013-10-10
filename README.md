@@ -11,7 +11,7 @@ The Ontologies Management Tool can easily be installed on your server using the 
 
 ```bash
 
-  ./osf-installer --install-ontologies-management-tool -v
+  ./osf-installer --install-osf-ontologies-management-tool -v
   
 ```
 
