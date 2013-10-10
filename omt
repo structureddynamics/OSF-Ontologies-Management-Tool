@@ -6,8 +6,6 @@
   use \StructuredDynamics\osf\framework\Resultset;
   use \StructuredDynamics\osf\framework\Subject;
   
-  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
-  use \StructuredDynamics\osf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
   use \StructuredDynamics\osf\php\api\ws\ontology\create\OntologyCreateQuery;
   use \StructuredDynamics\osf\php\api\framework\CRUDPermission;
   
@@ -418,7 +416,7 @@
       
       $crudPermissions = new CRUDPermission($gCreate, $gRead, $gUpdate, $gDelete);
       
-      $ontologyCreate = new OntologyCreateQuery($arguments['osf-web-services']);
+      $ontologyCreate = new OntologyCreateQuery($arguments['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
       
       $ontologyCreate->uri($url)
                      ->globalPermissions($crudPermissions)
