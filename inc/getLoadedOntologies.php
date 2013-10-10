@@ -1,11 +1,11 @@
 <?php
 
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
 
-  function getLoadedOntologies($structwsf, $queryExtension = NULL)
+  function getLoadedOntologies($osfWebServices, $queryExtension = NULL)
   {
-    $ontologyRead = new OntologyReadQuery($structwsf);
+    $ontologyRead = new OntologyReadQuery($osfWebServices);
     
     $getLoadedOntologiesFunction = new GetLoadedOntologiesFunction();
     $getLoadedOntologiesFunction->modeDescriptions();

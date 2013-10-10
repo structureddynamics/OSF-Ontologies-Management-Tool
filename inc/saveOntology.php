@@ -1,18 +1,18 @@
 <?php
 
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\update\OntologyUpdateQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\update\OntologyUpdateQuery;
 
   /**
-  * Save an ontology from a structWSF instance
+  * Save an ontology from a OSF Web Services instance
   * 
   * @param mixed $uri URI of the ontology to save
-  * @param mixed $structwsf URL of the structWSF network
+  * @param mixed $osfWebServices URL of the OSF Web Services network
   * 
   * @return Return FALSE if the ontology couldn't be saved. Return TRUE otherwise.
   */  
-  function saveOntology($uri, $structwsf, $queryExtension = NULL)
+  function saveOntology($uri, $osfWebServices, $queryExtension = NULL)
   {
-    $ontologyUpdate = new OntologyUpdateQuery($structwsf);
+    $ontologyUpdate = new OntologyUpdateQuery($osfWebServices);
     
     $ontologyUpdate->ontology($uri)
                    ->saveOntology()

@@ -1,14 +1,14 @@
 <?php
 
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
 
-  function generateStructures($folder, $structwsf, $queryExtension = NULL)
+  function generateStructures($folder, $osfWebServices, $queryExtension = NULL)
   {
     include_once('getLoadedOntologies.php');
 
     cecho("Generating derivate ontological structures...\n", 'CYAN');
     
-    $ontologiesClustered = getLoadedOntologies($structwsf);
+    $ontologiesClustered = getLoadedOntologies($osfWebServices);
     
     $ontologies = array();
     
@@ -19,7 +19,7 @@
     {
       cecho("Generating ironXML schema of the ".$ontology['label']." ontology...\n", 'CYAN');
       
-      $ontologyRead = new OntologyReadQuery($structwsf);
+      $ontologyRead = new OntologyReadQuery($osfWebServices);
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronXMLSchema()
@@ -57,7 +57,7 @@
     {
       cecho("Generating ironJSON schema of the ".$ontology['label']." ontology...\n", 'CYAN');
       
-      $ontologyRead = new OntologyReadQuery($structwsf);
+      $ontologyRead = new OntologyReadQuery($osfWebServices);
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronJsonSchema()
@@ -175,7 +175,7 @@
     // Generate PHP serialized classes hierarchy
     cecho("Generating PHP serialized classes hierarchy structure file...\n", 'CYAN');
     
-    $ontologyRead = new OntologyReadQuery($structwsf);
+    $ontologyRead = new OntologyReadQuery($osfWebServices);
     
     $ontologyRead->getSerializedClassHierarchy()
                  ->send(($queryExtension !== NULL ? $queryExtension : NULL));
@@ -204,7 +204,7 @@
     // Generate PHP serialized properties hierarchy
     cecho("Generating PHP serialized properties hierarchy structure file...\n", 'CYAN');
     
-    $ontologyRead = new OntologyReadQuery($structwsf);
+    $ontologyRead = new OntologyReadQuery($osfWebServices);
     
     $ontologyRead->getSerializedPropertyHierarchy()
                  ->send(($queryExtension !== NULL ? $queryExtension : NULL));

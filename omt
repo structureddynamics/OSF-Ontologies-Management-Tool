@@ -2,26 +2,20 @@
 
 <?php
 
-  use \StructuredDynamics\structwsf\framework\Namespaces;
-  use \StructuredDynamics\structwsf\framework\Resultset;
-  use \StructuredDynamics\structwsf\framework\Subject;
+  use \StructuredDynamics\osf\framework\Namespaces;
+  use \StructuredDynamics\osf\framework\Resultset;
+  use \StructuredDynamics\osf\framework\Subject;
   
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\create\OntologyCreateQuery;
-  use \StructuredDynamics\structwsf\php\api\framework\CRUDPermission;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
+  use \StructuredDynamics\osf\php\api\ws\ontology\create\OntologyCreateQuery;
+  use \StructuredDynamics\osf\php\api\framework\CRUDPermission;
   
   // Set the working directory of this script to its home directory. That way, if it is ran from elsewhere,
   // the relative paths will follow.
   chdir(dirname(realpath($argv[0])));  
   
   include_once('inc/clt.php');
-  
-  /*
-    
-    The sync.php script does manage the management of ontologies in a structWSF instance.  
-  
-  */
 
   if(PHP_SAPI != 'cli')
   {
@@ -34,12 +28,12 @@
                                       'list::',
                                       'delete::',
                                       'save::',    
-                                      'structwsf::',
+                                      'osf-web-services::',
                                       'generate-structures::',
                                       'load-all::',
                                       'load-list::',
                                       'load-advanced-index::',
-                                      'structwsf-query-extension::',
+                                      'osf-web-services-query-extension::',
                                       'load-force-reload::',
                                       'global-perm-create::',
                                       'global-perm-read::',
@@ -51,11 +45,11 @@
   {
     cecho("Usage: omt [OPTIONS]\n\n\n", 'WHITE');
     cecho("Usage examples: \n", 'WHITE');
-    cecho("    Load all ontologies: php sync.php --load-all --load-list=\"/data/ontologies/sync/ontologies.lst\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
-    cecho("    Load one ontology: omt --load=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
-    cecho("    List loaded ontologies: omt --list --structwsf=http://localhost/ws/\"\n", 'WHITE');
-    cecho("    Deleting an ontology: omt --delete=\"http://purl.org/ontology/bibo/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
-    cecho("    Generate structures: omt --generate-structures=\"/data/ontologies/structure/\" --structwsf=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Load all ontologies: php sync.php --load-all --load-list=\"/data/ontologies/sync/ontologies.lst\" --osf-web-services=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Load one ontology: omt --load=\"http://purl.org/ontology/bibo/\" --osf-web-services=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    List loaded ontologies: omt --list --osf-web-services=http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Deleting an ontology: omt --delete=\"http://purl.org/ontology/bibo/\" --osf-web-services=\"http://localhost/ws/\"\n", 'WHITE');
+    cecho("    Generate structures: omt --generate-structures=\"/data/ontologies/structure/\" --osf-web-services=\"http://localhost/ws/\"\n", 'WHITE');
     cecho("\n\n\nOptions:\n", 'WHITE');
     cecho("-l, --load-all                          Load all the ontologies from a list of URLs\n\n", 'WHITE');
     cecho("--load=\"[URL]\"                          Load a single ontology\n\n", 'WHITE');
@@ -68,10 +62,10 @@
     cecho("                                        Specify where the structure files should be saved.\n\n", 'WHITE');
     cecho("-h, --help                              Show this help section\n\n", 'WHITE');
     cecho("General Options:\n", 'WHITE');
-    cecho("--structwsf=\"[URL]\"                     (required) Target structWSF network endpoints URL.\n", 'WHITE');
+    cecho("--osf-web-services=\"[URL]\"                     (required) Target OSF Web Services network endpoints URL.\n", 'WHITE');
     cecho("                                                   Example: 'http://localhost/ws/'\n", 'WHITE');
-    cecho("--structwsf-query-extension=\"[CLASS]\"   (optional) Query Extension Class (with its full namespace) to use for querying structwsf\n", 'WHITE');
-    cecho("                                                   Example: 'StructuredDynamics\structwsf\framework\MYQuerierExtension'\n", 'WHITE');
+    cecho("--osf-web-services-query-extension=\"[CLASS]\"   (optional) Query Extension Class (with its full namespace) to use for querying the OSF Web Services\n", 'WHITE');
+    cecho("                                                   Example: 'StructuredDynamics\\osf\\framework\\MYQuerierExtension'\n", 'WHITE');
     cecho("Load Options:\n", 'WHITE');
     cecho("--load-list=\"[FILE]\"                    (required) File path where the list can be read.\n", 'WHITE');
     cecho("                                                   The list is a series of space-seperated\n", 'WHITE');
@@ -80,13 +74,13 @@
     cecho("                                                   is enabled. This means that the ontology's description \n", 'WHITE');
     cecho("                                                   (so all the classes, properties and named individuals) \n", 'WHITE');
     cecho("                                                   will be indexed in the other data management system in \n", 'WHITE');
-    cecho("                                                   structWSF. This means that all the information in these \n", 'WHITE');
+    cecho("                                                   the OSF Web Services. This means that all the information in these \n", 'WHITE');
     cecho("                                                   ontologies will be accessible via the other endpoints \n", 'WHITE');
     cecho("                                                   such as the Search and the SPARQL web service endpoints. \n", 'WHITE');
     cecho("                                                   Enabling this option may render the creation process \n", 'WHITE');
     cecho("                                                   slower depending on the size of the created ontology.\n", 'WHITE');
     cecho("--load-force-reload=\"[BOOL]\"            (optional) Default is false. If true, it means all the ontologies\n", 'WHITE');
-    cecho("                                                   will be deleted and reloaded/re-indexed in structWSF\n", 'WHITE');
+    cecho("                                                   will be deleted and reloaded/re-indexed in the OSF Web Services\n", 'WHITE');
     cecho("--global-perm-create=\"[BOOL]\"           (optional) Default is false. If true, it means that the ontology\n", 'WHITE');
     cecho("                                                   that will be created will have global create permissions\n", 'WHITE');
     cecho("--global-perm-read=\"[BOOL]\"           (optional) Default is true. If true, it means that the ontology\n", 'WHITE');
@@ -102,25 +96,25 @@
   // Load settings file
   $setup = parse_ini_file(getcwd()."/sync.ini", TRUE); 
   
-  // Load the structWSF-PHP-API
-  $structwsfFolder = rtrim($setup["config"]["structwsfFolder"], "/");
+  // Load the OSF-WS-PHP-API
+  $osfWebServicesFolder = rtrim($setup["config"]["osfWebServicesFolder"], "/");
   
-  include_once($structwsfFolder."/StructuredDynamics/SplClassLoader.php"); 
+  include_once($osfWebServicesFolder."/StructuredDynamics/SplClassLoader.php"); 
   
   // Check if a query extension has been defined
   $queryExtension = NULL;
-  if(isset($arguments['structwsf-query-extension']))  
+  if(isset($arguments['osf-web-services-query-extension']))  
   {
-    $queryExtension = $arguments['structwsf-query-extension'];
+    $queryExtension = $arguments['osf-web-services-query-extension'];
   }
  
   // Generate structures
   if(isset($arguments['generate-structures']))
   {
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['structwsf']))
+    if(empty($arguments['osf-web-services']))
     {
-      cecho("Missing the --structwsf parameter for generating the structures.\n", 'RED');  
+      cecho("Missing the --osf-web-services parameter for generating the structures.\n", 'RED');  
       
       exit;
     }
@@ -129,7 +123,7 @@
     
     if(!empty($arguments['generate-structures']))
     {
-      generateStructures($arguments['generate-structures'], $arguments['structwsf'], $queryExtension);
+      generateStructures($arguments['generate-structures'], $arguments['osf-web-services'], $queryExtension);
     }
     else
     {
@@ -140,9 +134,9 @@
   if(isset($arguments['save']))
   {
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['structwsf']))
+    if(empty($arguments['osf-web-services']))
     {
-      cecho("Missing the --structwsf parameter for saving the ontology.\n", 'RED');  
+      cecho("Missing the --osf-web-services parameter for saving the ontology.\n", 'RED');  
       
       exit;
     } 
@@ -153,14 +147,14 @@
     {   
       cecho("Saving ontology: ".$arguments['save']."\n", 'CYAN');
       
-      $deleted = saveOntology($arguments['save'], $arguments['structwsf'], $queryExtension);  
+      $deleted = saveOntology($arguments['save'], $arguments['osf-web-services'], $queryExtension);  
     }
     else
     {
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
+      $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -219,7 +213,7 @@
       {
         cecho("Saving ontology: ".$ontology['label']."\n", 'CYAN');
         
-        $deleted = saveOntology($ontology['uri'], $arguments['structwsf'], $queryExtension);          
+        $deleted = saveOntology($ontology['uri'], $arguments['osf-web-services'], $queryExtension);          
       }
     }
   }   
@@ -228,9 +222,9 @@
   if(isset($arguments['delete']))
   {
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['structwsf']))
+    if(empty($arguments['osf-web-services']))
     {
-      cecho("Missing the --structwsf parameter for deleting the ontology.\n", 'RED');  
+      cecho("Missing the --osf-web-services parameter for deleting the ontology.\n", 'RED');  
       
       exit;
     } 
@@ -241,14 +235,14 @@
     {   
       cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
       
-      $deleted = deleteOntology($arguments['delete'], $arguments['structwsf'], $queryExtension);  
+      $deleted = deleteOntology($arguments['delete'], $arguments['osf-web-services'], $queryExtension);  
     }
     else
     {
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
+      $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -307,7 +301,7 @@
       {
         cecho("Deleting ontology: ".$ontology['label']."\n", 'CYAN');
         
-        $deleted = deleteOntology($ontology['uri'], $arguments['structwsf'], $queryExtension);          
+        $deleted = deleteOntology($ontology['uri'], $arguments['osf-web-services'], $queryExtension);          
       }
     }
   }  
@@ -316,16 +310,16 @@
   if(isset($arguments['list']))
   {
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['structwsf']))
+    if(empty($arguments['osf-web-services']))
     {
-      cecho("Missing the --structwsf parameter for listing ontologies.\n", 'RED');  
+      cecho("Missing the --osf-web-services parameter for listing ontologies.\n", 'RED');  
       
       exit;
     }    
     
     include_once('inc/getLoadedOntologies.php');
     
-    $ontologies = getLoadedOntologies($arguments['structwsf'], $queryExtension);
+    $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
     
     showLoadedOntologies($ontologies);
   }
@@ -342,9 +336,9 @@
     }
     
     // Make sure the required arguments are defined in the arguments
-    if(empty($arguments['structwsf']))
+    if(empty($arguments['osf-web-services']))
     {
-      cecho("Missing the --structwsf parameter for loading all the ontologies.\n", 'RED');  
+      cecho("Missing the --osf-web-services parameter for loading all the ontologies.\n", 'RED');  
       
       exit;
     }
@@ -381,7 +375,7 @@
         
         include_once('inc/deleteOntology.php');
         
-        $deleted = deleteOntology($url, $arguments['structwsf'], $queryExtension);
+        $deleted = deleteOntology($url, $arguments['osf-web-services'], $queryExtension);
         
         if(!$deleted)
         {
@@ -416,7 +410,7 @@
       
       $crudPermissions = new CRUDPermission($gCreate, $gRead, $gUpdate, $gDelete);
       
-      $ontologyCreate = new OntologyCreateQuery($arguments['structwsf']);
+      $ontologyCreate = new OntologyCreateQuery($arguments['osf-web-services']);
       
       $ontologyCreate->uri($url)
                      ->globalPermissions($crudPermissions)

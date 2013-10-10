@@ -1,18 +1,18 @@
 <?php
 
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\delete\OntologyDeleteQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\delete\OntologyDeleteQuery;
 
   /**
-  * Delete an ontology from a structWSF instance
+  * Delete an ontology from a OSF Web Services instance
   * 
   * @param mixed $uri URI of the ontology to delete
-  * @param mixed $structwsf URL of the structWSF network
+  * @param mixed $osfWebServices URL of the OSF Web Services network
   * 
   * @return Return FALSE if the ontology couldn't be delete. Return TRUE otherwise.
   */
-  function deleteOntology($uri, $structwsf, $queryExtension = NULL)
+  function deleteOntology($uri, $osfWebServices, $queryExtension = NULL)
   {
-    $ontologyDelete = new OntologyDeleteQuery($structwsf);
+    $ontologyDelete = new OntologyDeleteQuery($osfWebServices);
     
     $ontologyDelete->ontology($uri)
                    ->deleteOntology()
