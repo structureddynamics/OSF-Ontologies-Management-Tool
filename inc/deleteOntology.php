@@ -6,13 +6,13 @@
   * Delete an ontology from a OSF Web Services instance
   * 
   * @param mixed $uri URI of the ontology to delete
-  * @param mixed $osfWebServices URL of the OSF Web Services network
+  * @param mixed $credentials['osf-web-services'] URL of the OSF Web Services network
   * 
   * @return Return FALSE if the ontology couldn't be delete. Return TRUE otherwise.
   */
-  function deleteOntology($uri, $osfWebServices, $queryExtension = NULL)
+  function deleteOntology($uri, $credentials, $queryExtension = NULL)
   {
-    $ontologyDelete = new OntologyDeleteQuery($osfWebServices);
+    $ontologyDelete = new OntologyDeleteQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyDelete->ontology($uri)
                    ->deleteOntology()

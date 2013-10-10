@@ -2,13 +2,13 @@
 
   use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
 
-  function generateStructures($folder, $osfWebServices, $queryExtension = NULL)
+  function generateStructures($folder, $credentials, $queryExtension = NULL)
   {
     include_once('getLoadedOntologies.php');
 
     cecho("Generating derivate ontological structures...\n", 'CYAN');
     
-    $ontologiesClustered = getLoadedOntologies($osfWebServices);
+    $ontologiesClustered = getLoadedOntologies($credentials['osf-web-services']);
     
     $ontologies = array();
     
@@ -19,7 +19,7 @@
     {
       cecho("Generating ironXML schema of the ".$ontology['label']." ontology...\n", 'CYAN');
       
-      $ontologyRead = new OntologyReadQuery($osfWebServices);
+      $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronXMLSchema()
@@ -57,7 +57,7 @@
     {
       cecho("Generating ironJSON schema of the ".$ontology['label']." ontology...\n", 'CYAN');
       
-      $ontologyRead = new OntologyReadQuery($osfWebServices);
+      $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronJsonSchema()
@@ -175,7 +175,7 @@
     // Generate PHP serialized classes hierarchy
     cecho("Generating PHP serialized classes hierarchy structure file...\n", 'CYAN');
     
-    $ontologyRead = new OntologyReadQuery($osfWebServices);
+    $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyRead->getSerializedClassHierarchy()
                  ->send(($queryExtension !== NULL ? $queryExtension : NULL));
@@ -204,7 +204,7 @@
     // Generate PHP serialized properties hierarchy
     cecho("Generating PHP serialized properties hierarchy structure file...\n", 'CYAN');
     
-    $ontologyRead = new OntologyReadQuery($osfWebServices);
+    $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyRead->getSerializedPropertyHierarchy()
                  ->send(($queryExtension !== NULL ? $queryExtension : NULL));

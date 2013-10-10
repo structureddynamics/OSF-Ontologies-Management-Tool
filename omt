@@ -94,7 +94,15 @@
   }
   
   // Load settings file
-  $setup = parse_ini_file(getcwd()."/sync.ini", TRUE); 
+  $setup = parse_ini_file(getcwd()."/omt.ini", TRUE); 
+  
+  // Create credentials array
+  $credentials = array(
+    'osf-web-services' => (isset($arguments['osf-web-services']) ? $arguments['osf-web-services'] : ''),
+    'application-id' => $setup["credentials"]["application-id"],
+    'api-key' => $setup["credentials"]["api-key"],
+    'user' => $setup["credentials"]["user"],
+  );
   
   // Load the OSF-WS-PHP-API
   $osfWebServicesFolder = rtrim($setup["config"]["osfWebServicesFolder"], "/");
@@ -123,7 +131,7 @@
     
     if(!empty($arguments['generate-structures']))
     {
-      generateStructures($arguments['generate-structures'], $arguments['osf-web-services'], $queryExtension);
+      generateStructures($arguments['generate-structures'], $credentials, $queryExtension);
     }
     else
     {
@@ -147,14 +155,14 @@
     {   
       cecho("Saving ontology: ".$arguments['save']."\n", 'CYAN');
       
-      $deleted = saveOntology($arguments['save'], $arguments['osf-web-services'], $queryExtension);  
+      $deleted = saveOntology($arguments['save'], $credentials, $queryExtension);  
     }
     else
     {
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
+      $ontologies = getLoadedOntologies($credentials, $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -235,7 +243,7 @@
     {   
       cecho("Deleting ontology: ".$arguments['delete']."\n", 'CYAN');
       
-      $deleted = deleteOntology($arguments['delete'], $arguments['osf-web-services'], $queryExtension);  
+      $deleted = deleteOntology($arguments['delete'], $credentials, $queryExtension);  
     }
     else
     {

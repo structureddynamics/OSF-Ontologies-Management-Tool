@@ -3,9 +3,9 @@
   use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
   use \StructuredDynamics\osf\php\api\ws\ontology\read\GetLoadedOntologiesFunction;
 
-  function getLoadedOntologies($osfWebServices, $queryExtension = NULL)
+  function getLoadedOntologies($credentials, $queryExtension = NULL)
   {
-    $ontologyRead = new OntologyReadQuery($osfWebServices);
+    $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $getLoadedOntologiesFunction = new GetLoadedOntologiesFunction();
     $getLoadedOntologiesFunction->modeDescriptions();

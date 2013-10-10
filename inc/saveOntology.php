@@ -6,13 +6,13 @@
   * Save an ontology from a OSF Web Services instance
   * 
   * @param mixed $uri URI of the ontology to save
-  * @param mixed $osfWebServices URL of the OSF Web Services network
+  * @param mixed $credentials['osf-web-services'] URL of the OSF Web Services network
   * 
   * @return Return FALSE if the ontology couldn't be saved. Return TRUE otherwise.
   */  
-  function saveOntology($uri, $osfWebServices, $queryExtension = NULL)
+  function saveOntology($uri, $credentials, $queryExtension = NULL)
   {
-    $ontologyUpdate = new OntologyUpdateQuery($osfWebServices);
+    $ontologyUpdate = new OntologyUpdateQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyUpdate->ontology($uri)
                    ->saveOntology()
