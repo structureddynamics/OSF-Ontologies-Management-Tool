@@ -6,6 +6,9 @@
   use \StructuredDynamics\osf\framework\Resultset;
   use \StructuredDynamics\osf\framework\Subject;
   use \StructuredDynamics\osf\php\api\ws\ontology\create\OntologyCreateQuery;
+  use \StructuredDynamics\osf\php\api\ws\auth\registrar\access\AuthRegistrarAccessQuery;
+  use \StructuredDynamics\osf\php\api\ws\auth\lister\AuthListerQuery;
+  use \StructuredDynamics\osf\php\api\framework\CRUDPermission;
   
   // Set the working directory of this script to its home directory. That way, if it is ran from elsewhere,
   // the relative paths will follow.
@@ -293,7 +296,7 @@
       {
         cecho("Deleting ontology: ".$ontology['label']."\n", 'CYAN');
         
-        $deleted = deleteOntology($ontology['uri'], $arguments['osf-web-services'], $queryExtension);          
+        $deleted = deleteOntology($ontology['uri'], $credentials, $queryExtension);          
       }
     }
   }  
@@ -367,7 +370,7 @@
         
         include_once('inc/deleteOntology.php');
         
-        $deleted = deleteOntology($url, $arguments['osf-web-services'], $queryExtension);
+        $deleted = deleteOntology($url, $credentials, $queryExtension);
         
         if(!$deleted)
         {
@@ -391,6 +394,8 @@
       
       $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
       
+      var_dump($ontologyCreate);
+      
       if($ontologyCreate->isSuccessful())      
       {
         cecho("$url loaded!\n", 'BLUE');        
@@ -409,7 +414,58 @@
           @cecho('Can\'t load ontology file '.$url.'. '. $ontologyCreate->getStatusMessage() . 
                $ontologyCreate->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
         }
+        
+        continue;
       }
+      
+      // Create the accesses of the OMT for that new dataset
+      
+      // Get the list of registered web services
+      $authLister = new AuthListerQuery($arguments['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
+      
+      $authLister->getRegisteredWebServiceEndpointsUri()
+                 ->mime('resultset')
+                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+      
+      if(!$authLister->isSuccessful())      
+      {
+        $debugFile = md5(microtime()).'.error';
+        file_put_contents('/tmp/'.$debugFile, var_export($authLister, TRUE));
+             
+        @cecho('Can\'t get the list of registered web services to create the permissions '.$url.'. '. $authLister->getStatusMessage() . 
+             $authLister->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
+        
+        continue;
+      } 
+      
+      $webservices = array();
+      
+      $resultset = $authLister->getResultset()->getResultset();
+      
+      foreach($resultset['unspecified'] as $list)
+      {
+        foreach($list['http://www.w3.org/1999/02/22-rdf-syntax-ns#li'] as $ws)
+        {
+          $webservices[] = $ws['uri'];
+        }
+      }
+      
+      // Register the credentials      
+      $authRegistrarAccess = new AuthRegistrarAccessQuery($arguments['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
+      
+      $crudPermissions = new CRUDPermission(TRUE, TRUE, TRUE, TRUE);
+      
+      $authRegistrarAccess->create($setup["credentials"]["group"], $url, $crudPermissions, $webservices)
+                          ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+      
+      if(!$authRegistrarAccess->isSuccessful())      
+      {
+        $debugFile = md5(microtime()).'.error';
+        file_put_contents('/tmp/'.$debugFile, var_export($authRegistrarAccess, TRUE));
+             
+        @cecho('Can\'t create permissions for the loaded ontology: '.$url.'. '. $authRegistrarAccess->getStatusMessage() . 
+             $authRegistrarAccess->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
+      }      
     }
   }
 ?>
