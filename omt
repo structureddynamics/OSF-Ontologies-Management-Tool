@@ -394,8 +394,6 @@
       
       $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
       
-      var_dump($ontologyCreate);
-      
       if($ontologyCreate->isSuccessful())      
       {
         cecho("$url loaded!\n", 'BLUE');        
