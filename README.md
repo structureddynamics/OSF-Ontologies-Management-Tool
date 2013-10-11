@@ -63,9 +63,8 @@ Options:
 General Options:
 --osf-web-services="[URL]"                     (required) Target OSF Web Services network endpoints URL.
                                                    Example: 'http://localhost/ws/'
---osf-web-services-query-extension="[CLASS]"   (optional) Query Extension Class (with its full namespace) to use for querying OSF Web Services
-                                                   Example: 'StructuredDynamics\osf
-ramework\MYQuerierExtension'
+--osf-web-services-query-extension="[CLASS]"   (optional) Query Extension Class (with its full namespace) to use for querying the OSF Web Services
+                                                   Example: 'StructuredDynamics\osf\framework\MYQuerierExtension'
 Load Options:
 --load-list="[FILE]"                    (required) File path where the list can be read.
                                                    The list is a series of space-seperated
@@ -74,11 +73,11 @@ Load Options:
                                                    is enabled. This means that the ontology's description
                                                    (so all the classes, properties and named individuals)
                                                    will be indexed in the other data management system in
-                                                   OSF Web Services. This means that all the information in these
+                                                   the OSF Web Services. This means that all the information in these
                                                    ontologies will be accessible via the other endpoints
                                                    such as the Search and the SPARQL web service endpoints.
                                                    Enabling this option may render the creation process
                                                    slower depending on the size of the created ontology.
 --load-force-reload="[BOOL]"            (optional) Default is false. If true, it means all the ontologies
-                                                   will be deleted and reloaded/re-indexed in OSF Web Services
+                                                   will be deleted and reloaded/re-indexed in the OSF Web Services
 ```
