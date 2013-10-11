@@ -378,44 +378,6 @@
         }
       }
       
-      $ontologyCreate = new OntologyCreateQuery($arguments['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
-      
-      $ontologyCreate->uri($url)
-                     ->enableReasoner();
-                     
-      if(isset($arguments['load-advanced-index']) && filter_var($arguments['load-advanced-index'], FILTER_VALIDATE_BOOLEAN))
-      {
-        $ontologyCreate->enableAdvancedIndexation();
-      }
-      else
-      {
-        $ontologyCreate->disableAdvancedIndexation();
-      }
-      
-      $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
-      
-      if($ontologyCreate->isSuccessful())      
-      {
-        cecho("$url loaded!\n", 'BLUE');        
-      }
-      else
-      {
-        if(strpos($ontologyCreate->getStatusMessageDescription(), 'WS-ONTOLOGY-CREATE-302') !== FALSE)
-        {        
-          cecho("$url already loaded!\n", 'BLUE');        
-        }
-        else
-        {
-          $debugFile = md5(microtime()).'.error';
-          file_put_contents('/tmp/'.$debugFile, var_export($ontologyCreate, TRUE));
-               
-          @cecho('Can\'t load ontology file '.$url.'. '. $ontologyCreate->getStatusMessage() . 
-               $ontologyCreate->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
-        }
-        
-        continue;
-      }
-      
       // Create the accesses of the OMT for that new dataset
       
       // Get the list of registered web services
@@ -463,6 +425,44 @@
              
         @cecho('Can\'t create permissions for the loaded ontology: '.$url.'. '. $authRegistrarAccess->getStatusMessage() . 
              $authRegistrarAccess->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
+      }      
+      
+      $ontologyCreate = new OntologyCreateQuery($arguments['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
+      
+      $ontologyCreate->uri($url)
+                     ->enableReasoner();
+                     
+      if(isset($arguments['load-advanced-index']) && filter_var($arguments['load-advanced-index'], FILTER_VALIDATE_BOOLEAN))
+      {
+        $ontologyCreate->enableAdvancedIndexation();
+      }
+      else
+      {
+        $ontologyCreate->disableAdvancedIndexation();
+      }
+      
+      $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
+      
+      if($ontologyCreate->isSuccessful())      
+      {
+        cecho("$url loaded!\n", 'BLUE');        
+      }
+      else
+      {
+        if(strpos($ontologyCreate->getStatusMessageDescription(), 'WS-ONTOLOGY-CREATE-302') !== FALSE)
+        {        
+          cecho("$url already loaded!\n", 'BLUE');        
+        }
+        else
+        {
+          $debugFile = md5(microtime()).'.error';
+          file_put_contents('/tmp/'.$debugFile, var_export($ontologyCreate, TRUE));
+               
+          @cecho('Can\'t load ontology file '.$url.'. '. $ontologyCreate->getStatusMessage() . 
+               $ontologyCreate->getStatusMessageDescription()."\nDebug file: /tmp/$debugFile\n", 'RED');
+        }
+        
+        continue;
       }      
     }
   }
