@@ -8,7 +8,7 @@
 
     cecho("Generating derivate ontological structures...\n", 'CYAN');
     
-    $ontologiesClustered = getLoadedOntologies($credentials['osf-web-services']);
+    $ontologiesClustered = getLoadedOntologies($credentials, $queryExtension);
     
     $ontologies = array();
     

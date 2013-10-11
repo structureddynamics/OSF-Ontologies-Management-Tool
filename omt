@@ -234,7 +234,7 @@
       // Show the list of loaded ontologies
       include_once('inc/getLoadedOntologies.php');
 
-      $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
+      $ontologies = getLoadedOntologies($credentials, $queryExtension);
       
       showLoadedOntologies($ontologies);  
       
@@ -311,7 +311,7 @@
     
     include_once('inc/getLoadedOntologies.php');
     
-    $ontologies = getLoadedOntologies($arguments['osf-web-services'], $queryExtension);
+    $ontologies = getLoadedOntologies($credentials, $queryExtension);
     
     showLoadedOntologies($ontologies);
   }
