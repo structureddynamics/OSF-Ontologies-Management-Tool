@@ -11,7 +11,7 @@
     $getLoadedOntologiesFunction->modeDescriptions();
     
     $ontologyRead->getLoadedOntologies($getLoadedOntologiesFunction)
-                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                 ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
         
     if($ontologyRead->isSuccessful())
     {
@@ -23,43 +23,46 @@
         'admin' => array()
       );
 
-      foreach($resultset['unspecified'] as $uri => $ontology)
+      if(isset($resultset['unspecified']))
       {
-        $onto = array(
-          'uri' => '',
-          'label' => '',
-          'modified' => false
-        );        
-
-        $ontologyType = 'local';
-        
-        if(isset($ontology['http://purl.org/ontology/sco#ontologyType']))
+        foreach($resultset['unspecified'] as $uri => $ontology)
         {
-          switch($ontology['http://purl.org/ontology/sco#ontologyType'][0]['uri'])
+          $onto = array(
+            'uri' => '',
+            'label' => '',
+            'modified' => false
+          );        
+
+          $ontologyType = 'local';
+          
+          if(isset($ontology['http://purl.org/ontology/sco#ontologyType']))
           {
-            case "http://purl.org/ontology/sco#referenceOntology":
-              $ontologyType = 'reference';
-            break;
-            case "http://purl.org/ontology/sco#administrativeOntology":
-              $ontologyType = 'admin';
-            break;
-            case "http://purl.org/ontology/sco#localOntology":
-              $ontologyType = 'local';
-            break;
+            switch($ontology['http://purl.org/ontology/sco#ontologyType'][0]['uri'])
+            {
+              case "http://purl.org/ontology/sco#referenceOntology":
+                $ontologyType = 'reference';
+              break;
+              case "http://purl.org/ontology/sco#administrativeOntology":
+                $ontologyType = 'admin';
+              break;
+              case "http://purl.org/ontology/sco#localOntology":
+                $ontologyType = 'local';
+              break;
+            }
           }
-        }
-        
-        $onto['uri'] = $uri;
-        $onto['label'] = $ontology['prefLabel'];
-        
-        if(isset($ontology['http://purl.org/ontology/wsf#ontologyModified']))
-        {
-          $onto['modified'] = TRUE;
-        }
+          
+          $onto['uri'] = $uri;
+          $onto['label'] = $ontology['prefLabel'];
+          
+          if(isset($ontology['http://purl.org/ontology/wsf#ontologyModified']))
+          {
+            $onto['modified'] = TRUE;
+          }
 
-        array_push($ontologies[$ontologyType], $onto);        
+          array_push($ontologies[$ontologyType], $onto);        
+        }
       }
-      
+            
       return($ontologies);
     }
     else

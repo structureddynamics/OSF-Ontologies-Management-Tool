@@ -385,7 +385,7 @@
       
       $authLister->getRegisteredWebServiceEndpointsUri()
                  ->mime('resultset')
-                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                 ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
       
       if(!$authLister->isSuccessful())      
       {
@@ -416,7 +416,7 @@
       $crudPermissions = new CRUDPermission(TRUE, TRUE, TRUE, TRUE);
       
       $authRegistrarAccess->create($setup["credentials"]["group"], $url, $crudPermissions, $webservices)
-                          ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                          ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
       
       if(!$authRegistrarAccess->isSuccessful())      
       {
@@ -441,7 +441,7 @@
         $ontologyCreate->disableAdvancedIndexation();
       }
       
-      $ontologyCreate->send(($queryExtension !== NULL ? $queryExtension : NULL));
+      $ontologyCreate->send(($queryExtension !== NULL ? new $queryExtension : NULL));
       
       if($ontologyCreate->isSuccessful())      
       {

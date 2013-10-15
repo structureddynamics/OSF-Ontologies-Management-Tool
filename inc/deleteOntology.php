@@ -16,7 +16,7 @@
     
     $ontologyDelete->ontology($uri)
                    ->deleteOntology()
-                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                   ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                    
     if($ontologyDelete->isSuccessful())
     {

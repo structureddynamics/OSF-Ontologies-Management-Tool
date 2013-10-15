@@ -23,7 +23,7 @@
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronXMLSchema()
-                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                   ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                    
       if($ontologyRead->isSuccessful())
       {  
@@ -61,7 +61,7 @@
       
       $ontologyRead->ontology($ontology['uri'])
                    ->getIronJsonSchema()
-                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                   ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                    
       if($ontologyRead->isSuccessful())
       {  
@@ -178,7 +178,7 @@
     $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyRead->getSerializedClassHierarchy()
-                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                 ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                  
     if($ontologyRead->isSuccessful())
     {  
@@ -207,7 +207,7 @@
     $ontologyRead = new OntologyReadQuery($credentials['osf-web-services'], $credentials['application-id'], $credentials['api-key'], $credentials['user']);
     
     $ontologyRead->getSerializedPropertyHierarchy()
-                 ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                 ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                  
     if($ontologyRead->isSuccessful())
     {  

@@ -16,7 +16,7 @@
     
     $ontologyUpdate->ontology($uri)
                    ->saveOntology()
-                   ->send(($queryExtension !== NULL ? $queryExtension : NULL));
+                   ->send(($queryExtension !== NULL ? new $queryExtension : NULL));
                    
     if($ontologyUpdate->isSuccessful())
     {
