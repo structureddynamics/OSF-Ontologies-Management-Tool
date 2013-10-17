@@ -36,7 +36,7 @@
                                       'load-force-reload::'));  
   
   // Displaying DSF's help screen if required
-  if(isset($arguments['h']) || isset($arguments['help']))
+  if(isset($arguments['h']) || isset($arguments['help']) || count($arguments) == 0)
   {
     cecho("Usage: omt [OPTIONS]\n\n\n", 'WHITE');
     cecho("Usage examples: \n", 'WHITE');
