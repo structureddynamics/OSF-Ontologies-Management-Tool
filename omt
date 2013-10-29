@@ -76,6 +76,7 @@
     cecho("                                                   slower depending on the size of the created ontology.\n", 'WHITE');
     cecho("--load-force-reload=\"[BOOL]\"            (optional) Default is false. If true, it means all the ontologies\n", 'WHITE');
     cecho("                                                   will be deleted and reloaded/re-indexed in the OSF Web Services\n", 'WHITE');
+    cecho("                                                   Which means in the OWLAPI, Virtuoso and Solr\n", 'WHITE');
     
     exit;
   }
