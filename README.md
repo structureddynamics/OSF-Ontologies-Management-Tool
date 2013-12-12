@@ -15,7 +15,7 @@ The Ontologies Management Tool can easily be installed on your server using the 
   
 ```
 
-The OMT is using the [OSF-WS-PHP-API](https://github.com/structureddynamics/OSF-WS-PHP-API) library to communicate with any OSF Web Services network instance. If the OSF-WS-PHP-API is not currently installed on your server, then follow these steps to download and install it on your server instance:
+The OMT is using the [OSF Web Services PHP API](https://github.com/structureddynamics/OSF-Web-Services-PHP-API) library to communicate with any OSF Web Services network instance. If the OSF Web Services PHP API is not currently installed on your server, then follow these steps to download and install it on your server instance:
 
 ```bash
 
