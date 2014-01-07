@@ -86,7 +86,8 @@
     cecho("                                                   Enabling this option may render the creation process \n", 'WHITE');
     cecho("                                                   slower depending on the size of the created ontology.\n", 'WHITE');
     cecho("--load-force-reload=\"[BOOL]\"            (optional) Default is false. If true, it means all the ontologies\n", 'WHITE');
-    cecho("                                                   will be deleted and reloaded/re-indexed in structWSF\n", 'WHITE');
+    cecho("                                                   will be deleted and reloaded/re-indexed in structWSF.\n", 'WHITE');
+    cecho("                                                   Which means in the OWLAPI, Virtuoso and Solr\n", 'WHITE');
     cecho("--global-perm-create=\"[BOOL]\"           (optional) Default is false. If true, it means that the ontology\n", 'WHITE');
     cecho("                                                   that will be created will have global create permissions\n", 'WHITE');
     cecho("--global-perm-read=\"[BOOL]\"           (optional) Default is true. If true, it means that the ontology\n", 'WHITE');
