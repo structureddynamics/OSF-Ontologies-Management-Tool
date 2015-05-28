@@ -340,7 +340,7 @@
     }
     
     // Load all the ontologies from the input list
-    if(!file_exists($arguments['load-list']) && !isset($arguments['load']))
+    if(isset($arguments['load-list']) && !file_exists($arguments['load-list']) && !isset($arguments['load']))
     {
       cecho("Input file of --load-list is not exising on this system.\n", 'RED');  
       
